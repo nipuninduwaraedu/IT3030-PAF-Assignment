@@ -5,7 +5,7 @@ IT3030 – Programming Applications and Frameworks Assignment 2026
 ## Tech Stack
 - Backend: Spring Boot
 - Frontend: React (Vite)
-- Database: MySQL
+- Database: MongoDB
 - Authentication: Google OAuth2
 - Version Control: GitHub
 
