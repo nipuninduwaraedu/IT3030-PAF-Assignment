@@ -1,5 +1,4 @@
 package com.smartcampus.facilities.controller;
-
 import com.smartcampus.facilities.dto.ResourceRequestDTO;
 import com.smartcampus.facilities.dto.ResourceResponseDTO;
 import com.smartcampus.facilities.entity.ResourceStatus;
@@ -10,14 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/resources")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
+@CrossOrigin(origins = {
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5175"
+})
 public class ResourceController {
-
     private final ResourceService resourceService;
 
     @Autowired
