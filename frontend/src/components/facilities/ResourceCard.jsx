@@ -92,10 +92,12 @@ const ResourceCard = ({ resource, onEdit, onDelete }) => {
         </p>
       )}
 
-      <div style={buttonContainerStyle}>
-        <button style={editBtnStyle} onClick={() => onEdit(resource)}>Edit</button>
-        <button style={deleteBtnStyle} onClick={() => onDelete(resource.id)}>Delete</button>
-      </div>
+     {(onEdit || onDelete) && (
+  <div style={buttonContainerStyle}>
+    {onEdit && <button style={editBtnStyle} onClick={() => onEdit(resource)}>✏️ Edit</button>}
+    {onDelete && <button style={deleteBtnStyle} onClick={() => onDelete(resource.id)}>🗑️ Delete</button>}
+  </div>
+)}
     </div>
   );
 };

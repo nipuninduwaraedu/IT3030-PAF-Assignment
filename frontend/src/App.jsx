@@ -2,15 +2,21 @@ import { useState } from 'react';
 import FacilitiesPage from './pages/FacilitiesPage';
 
 function App() {
-  const [activePage, setActivePage] = useState('facilities');
+  const [role, setRole] = useState('STUDENT');
 
   const navStyle = {
     backgroundColor: '#1a237e',
-    padding: '0 20px',
+    padding: '0 24px',
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+    justifyContent: 'space-between',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+  };
+
+  const navLeftStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '32px'
   };
 
   const navTitleStyle = {
@@ -18,40 +24,76 @@ function App() {
     fontSize: '20px',
     fontWeight: 'bold',
     padding: '16px 0',
-    marginRight: '24px'
   };
 
-  const navBtnStyle = (page) => ({
-    backgroundColor: activePage === page ? 'rgba(255,255,255,0.2)' : 'transparent',
+  const navBtnStyle = {
+    backgroundColor: 'rgba(255,255,255,0.15)',
     color: 'white',
     border: 'none',
-    padding: '16px 16px',
+    padding: '8px 18px',
     cursor: 'pointer',
     fontSize: '15px',
-    fontWeight: activePage === page ? 'bold' : 'normal',
-    borderBottom: activePage === page ? '3px solid white' : '3px solid transparent'
-  });
+    fontWeight: 'bold',
+    borderBottom: '3px solid white',
+    borderRadius: '4px'
+  };
 
-  const renderPage = () => {
-    switch (activePage) {
-      case 'facilities':
-        return <FacilitiesPage />;
-      default:
-        return <FacilitiesPage />;
-    }
+  const roleSwitcherStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px'
+  };
+
+  const roleLabelStyle = {
+    color: '#cfd8dc',
+    fontSize: '13px',
+    fontWeight: 'bold'
+  };
+
+  const roleSelectStyle = {
+    padding: '6px 12px',
+    borderRadius: '20px',
+    border: 'none',
+    fontWeight: 'bold',
+    fontSize: '13px',
+    backgroundColor: role === 'ADMIN' ? '#ff6f00' : '#00897b',
+    color: 'white',
+    cursor: 'pointer'
+  };
+
+  const badgeStyle = {
+    backgroundColor: role === 'ADMIN' ? '#ff6f00' : '#00897b',
+    color: 'white',
+    padding: '3px 10px',
+    borderRadius: '12px',
+    fontSize: '12px',
+    fontWeight: 'bold'
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f0f2f5' }}>
       <nav style={navStyle}>
-        <span style={navTitleStyle}>🏫 Smart Campus Operations Hub</span>
-        <button style={navBtnStyle('facilities')} onClick={() => setActivePage('facilities')}>
-          Facilities & Assets
-        </button>
+        <div style={navLeftStyle}>
+          <span style={navTitleStyle}>🏫 Smart Campus Operations Hub</span>
+          <button style={navBtnStyle}>Facilities & Assets</button>
+        </div>
+
+        <div style={roleSwitcherStyle}>
+          <span style={roleLabelStyle}>Demo Role:</span>
+          <select
+            style={roleSelectStyle}
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          >
+            <option value="STUDENT">STUDENT</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
+          <span style={badgeStyle}>{role}</span>
+        </div>
       </nav>
 
       <main>
-        {renderPage()}
+        <FacilitiesPage role={role} />
       </main>
     </div>
   );
