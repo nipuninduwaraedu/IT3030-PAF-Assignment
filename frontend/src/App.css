@@ -3,11 +3,11 @@
 :root {
   --primary: #6366f1;
   --primary-hover: #4f46e5;
-  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  --glass: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
+  --bg-gradient: #ffffff; /* White background */
+  --glass: rgba(255, 255, 255, 0.9); /* Opaque white glass */
+  --glass-border: rgba(0, 0, 0, 0.1); /* Darker borders for contrast */
+  --text-main: #1e293b; /* Dark text */
+  --text-muted: #64748b;
   --success: #22c55e;
   --error: #ef4444;
   --warning: #f59e0b;
@@ -63,7 +63,7 @@ body {
   border: 1px solid var(--glass-border);
   max-width: 800px;
   margin: 0 auto;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -99,10 +99,10 @@ label {
 input, select, textarea {
   width: 100%;
   padding: 0.8rem 1rem;
-  background: rgba(0, 0, 0, 0.2);
+  background: #f1f5f9; /* Light background */
   border: 1px solid var(--glass-border);
   border-radius: 0.75rem;
-  color: white;
+  color: #000000; /* Black text */
   outline: none;
   transition: border-color 0.3s;
 }
@@ -207,7 +207,7 @@ textarea {
 }
 
 .admin-table th {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(0, 0, 0, 0.05);
   color: var(--text-muted);
   font-weight: 500;
 }
