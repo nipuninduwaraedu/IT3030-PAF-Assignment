@@ -41,6 +41,20 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this ticket?")) {
+      try {
+        await ticketService.deleteTicket(id);
+        setMessage("Ticket deleted successfully!");
+        fetchTickets();
+        setTimeout(() => setMessage(""), 3000);
+      } catch (error) {
+        console.error("Error deleting ticket:", error);
+        alert("Failed to delete ticket.");
+      }
+    }
+  };
+
   return (
     <div className="page-container">
       <nav className="navbar">
@@ -82,22 +96,27 @@ const AdminDashboard = () => {
                     <td>{ticket.studentId}</td>
                     <td><span className={`status-tag ${ticket.status.toLowerCase()}`}>{ticket.status}</span></td>
                     <td>
-                      {ticket.status === "PENDING" ? (
-                        <div className="action-cell">
-                          <textarea 
-                            placeholder="Add comment..." 
-                            value={actionData.id === ticket.id ? actionData.comment : ""}
-                            onChange={(e) => setActionData({ id: ticket.id, comment: e.target.value })}
-                          />
-                          <div className="action-buttons">
-                            <button className="btn-accept" onClick={() => handleAction(ticket.id, "ACCEPTED")}>Accept</button>
-                            <button className="btn-reject" onClick={() => handleAction(ticket.id, "REJECTED")}>Reject</button>
+                      <div className="admin-actions-cell">
+                        {ticket.status === "PENDING" ? (
+                          <div className="action-cell">
+                            <textarea 
+                              placeholder="Add comment..." 
+                              value={actionData.id === ticket.id ? actionData.comment : ""}
+                              onChange={(e) => setActionData({ id: ticket.id, comment: e.target.value })}
+                            />
+                            <div className="action-buttons">
+                              <button className="btn-accept" onClick={() => handleAction(ticket.id, "ACCEPTED")}>Accept</button>
+                              <button className="btn-reject" onClick={() => handleAction(ticket.id, "REJECTED")}>Reject</button>
+                            </div>
                           </div>
+                        ) : (
+                          <span className="action-done">Resolved</span>
+                        )}
+                        <div className="secondary-actions">
+                          <Link to={`/ticket/${ticket.id}`} className="view-link">View</Link>
+                          <button onClick={() => handleDelete(ticket.id)} className="btn-delete-text">Delete</button>
                         </div>
-                      ) : (
-                        <span className="action-done">Resolved</span>
-                      )}
-                      <Link to={`/ticket/${ticket.id}`} className="view-link">View</Link>
+                      </div>
                     </td>
                   </tr>
                 ))}

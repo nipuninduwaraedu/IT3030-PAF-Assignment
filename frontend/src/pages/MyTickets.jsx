@@ -21,6 +21,17 @@ const MyTickets = () => {
     fetchTickets();
   }, []);
 
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this ticket?")) {
+      try {
+        await ticketService.deleteTicket(id);
+        setTickets(tickets.filter((t) => t.id !== id));
+      } catch (error) {
+        console.error("Error deleting ticket:", error);
+      }
+    }
+  };
+
   return (
     <div className="page-container">
       <nav className="navbar">
@@ -56,7 +67,15 @@ const MyTickets = () => {
                   <span>Priority: <strong className={ticket.priority.toLowerCase()}>{ticket.priority}</strong></span>
                   <span>{new Date(ticket.createdAt).toLocaleDateString()}</span>
                 </div>
-                <Link to={`/ticket/${ticket.id}`} className="btn-details">View Details</Link>
+                <div className="card-actions">
+                  <Link to={`/ticket/${ticket.id}`} className="btn-details">View</Link>
+                  {ticket.status === "PENDING" && (
+                    <>
+                      <Link to={`/edit-ticket/${ticket.id}`} className="btn-edit">Edit</Link>
+                      <button onClick={() => handleDelete(ticket.id)} className="btn-delete-small">Delete</button>
+                    </>
+                  )}
+                </div>
               </div>
             ))}
           </div>

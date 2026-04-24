@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import CreateTicket from "./pages/CreateTicket";
+import EditTicket from "./pages/EditTicket";
 import MyTickets from "./pages/MyTickets";
 import TicketDetails from "./pages/TicketDetails";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -12,6 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/create-ticket" />} />
           <Route path="/create-ticket" element={<CreateTicket />} />
+          <Route path="/edit-ticket/:id" element={<EditTicket />} />
           <Route path="/my-tickets" element={<MyTickets />} />
           <Route path="/ticket/:id" element={<TicketDetails />} />
           <Route path="/admin" element={<AdminDashboard />} />

@@ -22,6 +22,18 @@ const getTicketById = async (id) => {
   return await axios.get(`${API_URL}/${id}`);
 };
 
+const updateTicket = async (id, formData) => {
+  return await axios.put(`${API_URL}/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+const deleteTicket = async (id) => {
+  return await axios.delete(`${API_URL}/${id}`);
+};
+
 const updateTicketAction = async (id, status, comment) => {
   const params = new URLSearchParams();
   params.append("status", status);
@@ -34,5 +46,7 @@ export default {
   getStudentTickets,
   getAllTickets,
   getTicketById,
+  updateTicket,
+  deleteTicket,
   updateTicketAction,
 };

@@ -148,6 +148,53 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
     }
 
+    public Ticket updateTicket(String id, String category, String description, String priority, 
+                                String contactDetails, List<MultipartFile> images) throws IOException {
+        checkMongo();
+        Ticket ticket = getTicketById(id);
+        ticket.setCategory(category);
+        ticket.setDescription(description);
+        ticket.setPriority(priority);
+        ticket.setContactDetails(contactDetails);
+        
+        // Handle image updates if needed - for simplicity, we'll append new images
+        if (images != null && !images.isEmpty()) {
+            Path uploadPath = Paths.get(uploadDir);
+            for (MultipartFile image : images) {
+                if (!image.isEmpty()) {
+                    String fileName = UUID.randomUUID().toString() + "_" + StringUtils.cleanPath(image.getOriginalFilename());
+                    Path filePath = uploadPath.resolve(fileName);
+                    Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                    ticket.getImageUrls().add("/uploads/" + fileName);
+                }
+            }
+        }
+
+        if (mongoAvailable) {
+            try {
+                return ticketRepository.save(ticket);
+            } catch (Exception e) {
+                mongoAvailable = false;
+                lastCheck = LocalDateTime.now();
+            }
+        }
+        return ticket;
+    }
+
+    public void deleteTicket(String id) {
+        checkMongo();
+        if (mongoAvailable) {
+            try {
+                ticketRepository.deleteById(id);
+                // Also remove from in-memory if present
+            } catch (Exception e) {
+                mongoAvailable = false;
+                lastCheck = LocalDateTime.now();
+            }
+        }
+        inMemoryTickets.removeIf(t -> t.getId().equals(id));
+    }
+
     public Ticket updateTicketStatus(String id, String status, String comment) {
         checkMongo();
         Ticket ticket = getTicketById(id);

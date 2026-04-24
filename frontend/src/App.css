@@ -231,6 +231,74 @@ textarea {
 .btn-accept { background: var(--success); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 0.4rem; cursor: pointer; }
 .btn-reject { background: var(--error); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 0.4rem; cursor: pointer; }
 
+.priority-tag, .status-tag {
+  padding: 0.2rem 0.6rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.priority-tag.low { background: rgba(52, 211, 153, 0.2); color: #34d399; }
+.priority-tag.medium { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+.priority-tag.high { background: rgba(248, 113, 113, 0.2); color: #f87171; }
+
+.status-tag.pending { background: rgba(245, 158, 11, 0.1); color: #fbbf24; }
+.status-tag.accepted { background: rgba(34, 197, 94, 0.1); color: #4ade80; }
+.status-tag.rejected { background: rgba(239, 68, 68, 0.1); color: #f87171; }
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.btn-details, .btn-edit {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  flex: 1;
+}
+
+.btn-details { background: var(--primary); color: white; }
+.btn-edit { background: rgba(255, 255, 255, 0.1); color: var(--text-main); border: 1px solid var(--glass-border); }
+
+.btn-delete-small {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.admin-actions-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.secondary-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.85rem;
+}
+
+.view-link { color: var(--primary); text-decoration: none; }
+.btn-delete-text { background: none; border: none; color: var(--error); cursor: pointer; font-size: 0.85rem; padding: 0; }
+
+.back-link {
+  display: inline-block;
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
 /* Details Page */
 .details-card {
   background: var(--glass);

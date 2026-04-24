@@ -38,6 +38,29 @@ public class TicketController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Ticket> updateTicket(
+            @PathVariable String id,
+            @RequestParam("category") String category,
+            @RequestParam("description") String description,
+            @RequestParam("priority") String priority,
+            @RequestParam("contactDetails") String contactDetails,
+            @RequestParam(value = "images", required = false) List<MultipartFile> images) {
+        
+        try {
+            Ticket ticket = ticketService.updateTicket(id, category, description, priority, contactDetails, images);
+            return ResponseEntity.ok(ticket);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTicket(@PathVariable String id) {
+        ticketService.deleteTicket(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/student/{studentId}")
     public ResponseEntity<List<Ticket>> getStudentTickets(@PathVariable String studentId) {
         return ResponseEntity.ok(ticketService.getTicketsByStudent(studentId));
