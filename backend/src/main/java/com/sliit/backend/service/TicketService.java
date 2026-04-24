@@ -27,6 +27,8 @@ public class TicketService {
     @Value("${app.upload.dir:uploads}")
     private String uploadDir;
 
+    private static final List<Ticket> inMemoryTickets = new ArrayList<>();
+
     public Ticket createTicket(String category, String description, String priority, 
                                 String contactDetails, String studentId, List<MultipartFile> images) throws IOException {
         
@@ -49,6 +51,7 @@ public class TicketService {
         }
 
         Ticket ticket = new Ticket();
+        ticket.setId(UUID.randomUUID().toString());
         ticket.setCategory(category);
         ticket.setDescription(description);
         ticket.setPriority(priority);
@@ -58,25 +61,61 @@ public class TicketService {
         ticket.setStatus(Ticket.Status.PENDING.name());
         ticket.setCreatedAt(LocalDateTime.now());
 
-        return ticketRepository.save(ticket);
+        try {
+            return ticketRepository.save(ticket);
+        } catch (Exception e) {
+            System.err.println("MongoDB not available, using in-memory storage: " + e.getMessage());
+            inMemoryTickets.add(ticket);
+            return ticket;
+        }
     }
 
     public List<Ticket> getTicketsByStudent(String studentId) {
-        return ticketRepository.findByStudentIdOrderByCreatedAtDesc(studentId);
+        try {
+            return ticketRepository.findByStudentIdOrderByCreatedAtDesc(studentId);
+        } catch (Exception e) {
+            return inMemoryTickets.stream()
+                    .filter(t -> t.getStudentId().equals(studentId))
+                    .sorted((t1, t2) -> t2.getCreatedAt().compareTo(t1.getCreatedAt()))
+                    .toList();
+        }
     }
 
     public List<Ticket> getAllTickets() {
-        return ticketRepository.findAllByOrderByCreatedAtDesc();
+        try {
+            return ticketRepository.findAllByOrderByCreatedAtDesc();
+        } catch (Exception e) {
+            return new ArrayList<>(inMemoryTickets);
+        }
     }
 
     public Ticket getTicketById(String id) {
-        return ticketRepository.findById(id).orElseThrow(() -> new RuntimeException("Ticket not found"));
+        try {
+            return ticketRepository.findById(id).orElseGet(() -> 
+                inMemoryTickets.stream().filter(t -> t.getId().equals(id)).findFirst()
+                    .orElseThrow(() -> new RuntimeException("Ticket not found"))
+            );
+        } catch (Exception e) {
+            return inMemoryTickets.stream().filter(t -> t.getId().equals(id)).findFirst()
+                    .orElseThrow(() -> new RuntimeException("Ticket not found"));
+        }
     }
 
     public Ticket updateTicketStatus(String id, String status, String comment) {
-        Ticket ticket = getTicketById(id);
-        ticket.setStatus(status);
-        ticket.setAdminComment(comment);
-        return ticketRepository.save(ticket);
+        try {
+            Ticket ticket = getTicketById(id);
+            ticket.setStatus(status);
+            ticket.setAdminComment(comment);
+            
+            try {
+                return ticketRepository.save(ticket);
+            } catch (Exception e) {
+                // Already updated in memory by getTicketById which returns the reference
+                return ticket;
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to update ticket: " + e.getMessage());
+            return null;
+        }
     }
 }
