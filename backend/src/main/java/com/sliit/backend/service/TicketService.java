@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.*;
 
 @Service
 public class TicketService {
@@ -28,10 +29,41 @@ public class TicketService {
     private String uploadDir;
 
     private static final List<Ticket> inMemoryTickets = new ArrayList<>();
+    private static boolean mongoAvailable = true;
+    private static LocalDateTime lastCheck = LocalDateTime.MIN;
+
+    private void checkMongo() {
+        if (!mongoAvailable && LocalDateTime.now().isBefore(lastCheck.plusMinutes(10))) {
+            return; // Stay in in-memory mode for 10 minutes after failure
+        }
+        
+        try {
+            // Run the check in a separate thread with a hard timeout
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Future<Long> future = executor.submit(() -> ticketRepository.count());
+            try {
+                future.get(500, TimeUnit.MILLISECONDS);
+                mongoAvailable = true;
+                System.out.println("MongoDB is available.");
+            } catch (TimeoutException e) {
+                future.cancel(true);
+                mongoAvailable = false;
+                lastCheck = LocalDateTime.now();
+                System.err.println("MongoDB check timed out (500ms), using in-memory fallback.");
+            } finally {
+                executor.shutdownNow();
+            }
+        } catch (Exception e) {
+            mongoAvailable = false;
+            lastCheck = LocalDateTime.now();
+            System.err.println("MongoDB unavailable: " + e.getMessage());
+        }
+    }
 
     public Ticket createTicket(String category, String description, String priority, 
                                 String contactDetails, String studentId, List<MultipartFile> images) throws IOException {
         
+        checkMongo();
         List<String> imageUrls = new ArrayList<>();
         
         if (images != null && !images.isEmpty()) {
@@ -71,51 +103,65 @@ public class TicketService {
     }
 
     public List<Ticket> getTicketsByStudent(String studentId) {
-        try {
-            return ticketRepository.findByStudentIdOrderByCreatedAtDesc(studentId);
-        } catch (Exception e) {
-            return inMemoryTickets.stream()
-                    .filter(t -> t.getStudentId().equals(studentId))
-                    .sorted((t1, t2) -> t2.getCreatedAt().compareTo(t1.getCreatedAt()))
-                    .toList();
+        checkMongo();
+        if (mongoAvailable) {
+            try {
+                return ticketRepository.findByStudentIdOrderByCreatedAtDesc(studentId);
+            } catch (Exception e) {
+                mongoAvailable = false;
+                lastCheck = LocalDateTime.now();
+            }
         }
+        return inMemoryTickets.stream()
+                .filter(t -> t.getStudentId().equals(studentId))
+                .sorted((t1, t2) -> t2.getCreatedAt().compareTo(t1.getCreatedAt()))
+                .toList();
     }
 
     public List<Ticket> getAllTickets() {
-        try {
-            return ticketRepository.findAllByOrderByCreatedAtDesc();
-        } catch (Exception e) {
-            return new ArrayList<>(inMemoryTickets);
+        checkMongo();
+        if (mongoAvailable) {
+            try {
+                return ticketRepository.findAllByOrderByCreatedAtDesc();
+            } catch (Exception e) {
+                mongoAvailable = false;
+                lastCheck = LocalDateTime.now();
+            }
         }
+        return new ArrayList<>(inMemoryTickets);
     }
 
     public Ticket getTicketById(String id) {
-        try {
-            return ticketRepository.findById(id).orElseGet(() -> 
-                inMemoryTickets.stream().filter(t -> t.getId().equals(id)).findFirst()
-                    .orElseThrow(() -> new RuntimeException("Ticket not found"))
-            );
-        } catch (Exception e) {
-            return inMemoryTickets.stream().filter(t -> t.getId().equals(id)).findFirst()
-                    .orElseThrow(() -> new RuntimeException("Ticket not found"));
+        checkMongo();
+        if (mongoAvailable) {
+            try {
+                return ticketRepository.findById(id).orElseGet(() -> 
+                    inMemoryTickets.stream().filter(t -> t.getId().equals(id)).findFirst()
+                        .orElseThrow(() -> new RuntimeException("Ticket not found"))
+                );
+            } catch (Exception e) {
+                mongoAvailable = false;
+                lastCheck = LocalDateTime.now();
+            }
         }
+        return inMemoryTickets.stream().filter(t -> t.getId().equals(id)).findFirst()
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
     }
 
     public Ticket updateTicketStatus(String id, String status, String comment) {
-        try {
-            Ticket ticket = getTicketById(id);
-            ticket.setStatus(status);
-            ticket.setAdminComment(comment);
-            
+        checkMongo();
+        Ticket ticket = getTicketById(id);
+        ticket.setStatus(status);
+        ticket.setAdminComment(comment);
+        
+        if (mongoAvailable) {
             try {
                 return ticketRepository.save(ticket);
             } catch (Exception e) {
-                // Already updated in memory by getTicketById which returns the reference
-                return ticket;
+                mongoAvailable = false;
+                lastCheck = LocalDateTime.now();
             }
-        } catch (Exception e) {
-            System.err.println("Failed to update ticket: " + e.getMessage());
-            return null;
         }
+        return ticket;
     }
 }
