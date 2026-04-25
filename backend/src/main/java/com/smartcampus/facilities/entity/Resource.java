@@ -22,7 +22,6 @@ public class Resource {
     private ResourceType type;
     private Integer capacity;
     private String location;
-    private String availabilityWindows;
     private ResourceStatus status;
     private String description;
     private LocalDateTime createdAt;

@@ -45,7 +45,6 @@ public class ResourceService {
         existing.setType(dto.getType());
         existing.setCapacity(dto.getCapacity());
         existing.setLocation(dto.getLocation());
-        existing.setAvailabilityWindows(dto.getAvailabilityWindows());
         existing.setStatus(dto.getStatus());
         existing.setDescription(dto.getDescription());
         existing.setUpdatedAt(LocalDateTime.now());

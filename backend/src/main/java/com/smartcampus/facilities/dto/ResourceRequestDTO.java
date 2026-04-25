@@ -23,7 +23,6 @@ public class ResourceRequestDTO {
     @NotBlank
     private String location;
     
-    private String availabilityWindows;
     private ResourceStatus status;
     private String description;
 }
