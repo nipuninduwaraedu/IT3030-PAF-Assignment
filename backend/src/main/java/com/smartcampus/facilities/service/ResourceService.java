@@ -57,9 +57,7 @@ public class ResourceService {
         Resource existing = resourceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found: " + id));
 
-        existing.setStatus(ResourceStatus.OUT_OF_SERVICE);
-        existing.setUpdatedAt(LocalDateTime.now());
-        resourceRepository.save(existing); // soft delete
+        resourceRepository.delete(existing); // hard delete
     }
 
     public ResourceResponseDTO getResourceById(String id) {
