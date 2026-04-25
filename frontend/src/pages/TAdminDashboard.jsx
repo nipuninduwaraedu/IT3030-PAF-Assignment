@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ticketService from "../services/ticketService";
 
-const AdminDashboard = () => {
+const TAdminDashboard = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionData, setActionData] = useState({ id: null, comment: "" });
@@ -82,7 +82,6 @@ const AdminDashboard = () => {
                   <th>Date</th>
                   <th>Category</th>
                   <th>Priority</th>
-                  <th>Student</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
@@ -93,7 +92,6 @@ const AdminDashboard = () => {
                     <td>{new Date(ticket.createdAt).toLocaleDateString()}</td>
                     <td>{ticket.category}</td>
                     <td><span className={`priority-tag ${ticket.priority.toLowerCase()}`}>{ticket.priority}</span></td>
-                    <td>{ticket.studentId}</td>
                     <td><span className={`status-tag ${ticket.status.toLowerCase()}`}>{ticket.status}</span></td>
                     <td>
                       <div className="admin-actions-cell">
@@ -129,4 +127,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default TAdminDashboard;

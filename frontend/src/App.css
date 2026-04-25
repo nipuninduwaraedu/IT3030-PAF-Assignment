@@ -11,6 +11,7 @@
   --success: #10b981;
   --error: #ef4444;
   --warning: #f59e0b;
+  --primary-hover: #3730a3;
 }
 
 * {
@@ -148,6 +149,7 @@ textarea {
 .btn-submit:hover {
   background: var(--primary-hover);
   transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
 }
 
 .btn-submit:disabled {

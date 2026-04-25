@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ticketService from "../services/ticketService";
 
-const MyTickets = () => {
+const TMyTickets = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const studentId = "ST12345"; // Mock ID
@@ -85,4 +85,4 @@ const MyTickets = () => {
   );
 };
 
-export default MyTickets;
+export default TMyTickets;

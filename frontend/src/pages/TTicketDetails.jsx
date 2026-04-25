@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import ticketService from "../services/ticketService";
 
-const TicketDetails = () => {
+const TTicketDetails = () => {
   const { id } = useParams();
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -93,4 +93,4 @@ const TicketDetails = () => {
   );
 };
 
-export default TicketDetails;
+export default TTicketDetails;

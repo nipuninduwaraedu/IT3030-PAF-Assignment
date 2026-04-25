@@ -1,36 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import ticketService from "../services/ticketService";
 
-const EditTicket = () => {
-  const { id } = useParams();
+const TCreateTicket = () => {
   const [formData, setFormData] = useState({
-    category: "",
+    category: "Electrical",
     description: "",
-    priority: "",
+    priority: "LOW",
     contactDetails: "",
   });
   const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchTicket = async () => {
-      try {
-        const response = await ticketService.getTicketById(id);
-        const { category, description, priority, contactDetails } = response.data;
-        setFormData({ category, description, priority, contactDetails });
-      } catch (error) {
-        console.error("Error fetching ticket:", error);
-        setMessage("Failed to load ticket details.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTicket();
-  }, [id]);
+  // Mock student ID - In a real app, this would come from auth context
+  const studentId = "ST12345";
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -38,12 +23,16 @@ const EditTicket = () => {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
+    if (files.length > 3) {
+      alert("You can only upload a maximum of 3 images.");
+      return;
+    }
     setImages(files);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitting(true);
+    setLoading(true);
     setMessage("");
 
     const data = new FormData();
@@ -51,40 +40,38 @@ const EditTicket = () => {
     data.append("description", formData.description);
     data.append("priority", formData.priority);
     data.append("contactDetails", formData.contactDetails);
+    data.append("studentId", studentId);
     
     images.forEach((image) => {
       data.append("images", image);
     });
 
     try {
-      await ticketService.updateTicket(id, data);
-      setMessage("Ticket updated successfully!");
+      await ticketService.createTicket(data);
+      setMessage("Ticket created successfully!");
       setTimeout(() => navigate("/my-tickets"), 2000);
     } catch (error) {
       console.error(error);
-      setMessage("Failed to update ticket.");
+      setMessage("Failed to create ticket. Please try again.");
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
-
-  if (loading) return <div className="page-container">Loading...</div>;
 
   return (
     <div className="page-container">
       <nav className="navbar">
         <h2>Smart Campus</h2>
         <div className="nav-links">
-          <Link to="/create-ticket">Report Issue</Link>
+          <Link to="/create-ticket" className="active">Report Issue</Link>
           <Link to="/my-tickets">My Tickets</Link>
           <Link to="/admin">Admin</Link>
         </div>
       </nav>
 
       <div className="form-card">
-        <Link to="/my-tickets" className="back-link">← Cancel</Link>
-        <h1>Edit Ticket</h1>
-        <p className="subtitle">Update the details of your report.</p>
+        <h1>Report a Problem</h1>
+        <p className="subtitle">Fill in the details below to notify the maintenance team.</p>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -102,6 +89,7 @@ const EditTicket = () => {
             <label>Description</label>
             <textarea
               name="description"
+              placeholder="Describe the issue in detail..."
               value={formData.description}
               onChange={handleChange}
               required
@@ -122,6 +110,7 @@ const EditTicket = () => {
               <input
                 type="text"
                 name="contactDetails"
+                placeholder="Phone or Email"
                 value={formData.contactDetails}
                 onChange={handleChange}
                 required
@@ -130,12 +119,19 @@ const EditTicket = () => {
           </div>
 
           <div className="form-group">
-            <label>Add More Images (Optional)</label>
+            <label>Upload Images (Max 3)</label>
             <input type="file" multiple accept="image/*" onChange={handleImageChange} />
+            <div className="image-preview">
+              {images.map((img, index) => (
+                <div key={index} className="preview-thumb">
+                  {img.name}
+                </div>
+              ))}
+            </div>
           </div>
 
-          <button type="submit" disabled={submitting} className="btn-submit">
-            {submitting ? "Updating..." : "Update Ticket"}
+          <button type="submit" disabled={loading} className="btn-submit">
+            {loading ? "Submitting..." : "Submit Ticket"}
           </button>
         </form>
 
@@ -145,4 +141,4 @@ const EditTicket = () => {
   );
 };
 
-export default EditTicket;
+export default TCreateTicket;
