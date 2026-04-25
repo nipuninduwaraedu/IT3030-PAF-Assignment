@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import ticketService from "../services/ticketService";
+import TNavbar from "../components/TNavbar";
 
 const TEditTicket = () => {
   const { id } = useParams();
@@ -72,14 +73,7 @@ const TEditTicket = () => {
 
   return (
     <div className="page-container">
-      <nav className="navbar">
-        <h2>Smart Campus</h2>
-        <div className="nav-links">
-          <Link to="/create-ticket">Report Issue</Link>
-          <Link to="/my-tickets">My Tickets</Link>
-          <Link to="/admin">Admin</Link>
-        </div>
-      </nav>
+      <TNavbar />
 
       <div className="form-card">
         <Link to="/my-tickets" className="back-link">← Cancel</Link>

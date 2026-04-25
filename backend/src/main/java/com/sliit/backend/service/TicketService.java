@@ -2,12 +2,17 @@ package com.sliit.backend.service;
 
 import com.sliit.backend.entity.Ticket;
 import com.sliit.backend.repository.TicketRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,35 +33,57 @@ public class TicketService {
     @Value("${app.upload.dir:uploads}")
     private String uploadDir;
 
-    private static final List<Ticket> inMemoryTickets = new ArrayList<>();
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final File fallbackFile = new File("tickets_fallback.json");
+
+    private static List<Ticket> inMemoryTickets = new ArrayList<>();
     private static boolean mongoAvailable = true;
     private static LocalDateTime lastCheck = LocalDateTime.MIN;
 
+    @PostConstruct
+    public void init() {
+        loadFallback();
+    }
+
+    private void loadFallback() {
+        if (fallbackFile.exists()) {
+            try {
+                inMemoryTickets = objectMapper.readValue(fallbackFile, new TypeReference<List<Ticket>>() {});
+            } catch (IOException e) {
+                System.err.println("Failed to load fallback tickets: " + e.getMessage());
+            }
+        }
+    }
+
+    private synchronized void saveFallback() {
+        try {
+            objectMapper.writeValue(fallbackFile, inMemoryTickets);
+        } catch (IOException e) {
+            System.err.println("Failed to save fallback tickets: " + e.getMessage());
+        }
+    }
+
     private void checkMongo() {
-        if (!mongoAvailable && LocalDateTime.now().isBefore(lastCheck.plusMinutes(10))) {
-            return; // Stay in in-memory mode for 10 minutes after failure
+        if (!mongoAvailable && LocalDateTime.now().isBefore(lastCheck.plusMinutes(2))) {
+            return;
         }
         
         try {
-            // Run the check in a separate thread with a hard timeout
             ExecutorService executor = Executors.newSingleThreadExecutor();
             Future<Long> future = executor.submit(() -> ticketRepository.count());
             try {
-                future.get(500, TimeUnit.MILLISECONDS);
+                future.get(300, TimeUnit.MILLISECONDS);
                 mongoAvailable = true;
-                System.out.println("MongoDB is available.");
-            } catch (TimeoutException e) {
+            } catch (Exception e) {
                 future.cancel(true);
                 mongoAvailable = false;
                 lastCheck = LocalDateTime.now();
-                System.err.println("MongoDB check timed out (500ms), using in-memory fallback.");
             } finally {
                 executor.shutdownNow();
             }
         } catch (Exception e) {
             mongoAvailable = false;
             lastCheck = LocalDateTime.now();
-            System.err.println("MongoDB unavailable: " + e.getMessage());
         }
     }
 
@@ -90,16 +117,20 @@ public class TicketService {
         ticket.setContactDetails(contactDetails);
         ticket.setStudentId(studentId);
         ticket.setImageUrls(imageUrls);
-        ticket.setStatus(Ticket.Status.PENDING.name());
+        ticket.setStatus("PENDING");
         ticket.setCreatedAt(LocalDateTime.now());
 
-        try {
-            return ticketRepository.save(ticket);
-        } catch (Exception e) {
-            System.err.println("MongoDB not available, using in-memory storage: " + e.getMessage());
-            inMemoryTickets.add(ticket);
-            return ticket;
+        if (mongoAvailable) {
+            try {
+                return ticketRepository.save(ticket);
+            } catch (Exception e) {
+                mongoAvailable = false;
+            }
         }
+
+        inMemoryTickets.add(ticket);
+        saveFallback();
+        return ticket;
     }
 
     public List<Ticket> getTicketsByStudent(String studentId) {
@@ -109,7 +140,6 @@ public class TicketService {
                 return ticketRepository.findByStudentIdOrderByCreatedAtDesc(studentId);
             } catch (Exception e) {
                 mongoAvailable = false;
-                lastCheck = LocalDateTime.now();
             }
         }
         return inMemoryTickets.stream()
@@ -125,7 +155,6 @@ public class TicketService {
                 return ticketRepository.findAllByOrderByCreatedAtDesc();
             } catch (Exception e) {
                 mongoAvailable = false;
-                lastCheck = LocalDateTime.now();
             }
         }
         return new ArrayList<>(inMemoryTickets);
@@ -135,13 +164,12 @@ public class TicketService {
         checkMongo();
         if (mongoAvailable) {
             try {
-                return ticketRepository.findById(id).orElseGet(() -> 
+                ticketRepository.findById(id).orElseGet(() -> 
                     inMemoryTickets.stream().filter(t -> t.getId().equals(id)).findFirst()
                         .orElseThrow(() -> new RuntimeException("Ticket not found"))
                 );
             } catch (Exception e) {
                 mongoAvailable = false;
-                lastCheck = LocalDateTime.now();
             }
         }
         return inMemoryTickets.stream().filter(t -> t.getId().equals(id)).findFirst()
@@ -157,7 +185,6 @@ public class TicketService {
         ticket.setPriority(priority);
         ticket.setContactDetails(contactDetails);
         
-        // Handle image updates if needed - for simplicity, we'll append new images
         if (images != null && !images.isEmpty()) {
             Path uploadPath = Paths.get(uploadDir);
             for (MultipartFile image : images) {
@@ -175,9 +202,9 @@ public class TicketService {
                 return ticketRepository.save(ticket);
             } catch (Exception e) {
                 mongoAvailable = false;
-                lastCheck = LocalDateTime.now();
             }
         }
+        saveFallback();
         return ticket;
     }
 
@@ -186,13 +213,12 @@ public class TicketService {
         if (mongoAvailable) {
             try {
                 ticketRepository.deleteById(id);
-                // Also remove from in-memory if present
             } catch (Exception e) {
                 mongoAvailable = false;
-                lastCheck = LocalDateTime.now();
             }
         }
         inMemoryTickets.removeIf(t -> t.getId().equals(id));
+        saveFallback();
     }
 
     public Ticket updateTicketStatus(String id, String status, String comment) {
@@ -206,9 +232,9 @@ public class TicketService {
                 return ticketRepository.save(ticket);
             } catch (Exception e) {
                 mongoAvailable = false;
-                lastCheck = LocalDateTime.now();
             }
         }
+        saveFallback();
         return ticket;
     }
 }

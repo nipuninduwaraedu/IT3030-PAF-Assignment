@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ticketService from "../services/ticketService";
+import TNavbar from "../components/TNavbar";
 
 const TMyTickets = () => {
   const [tickets, setTickets] = useState([]);
@@ -34,15 +35,7 @@ const TMyTickets = () => {
 
   return (
     <div className="page-container">
-      <nav className="navbar">
-        <h2>Smart Campus</h2>
-        <div className="nav-links">
-          <Link to="/create-ticket">Report Issue</Link>
-          <Link to="/my-tickets" className="active">My Tickets</Link>
-          <Link to="/admin">Admin</Link>
-        </div>
-      </nav>
-
+      <TNavbar />
       <div className="content-area">
         <h1>My Tickets</h1>
         <p className="subtitle">Track the status of your reported issues.</p>
