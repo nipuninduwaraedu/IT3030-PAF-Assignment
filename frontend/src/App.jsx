@@ -1,8 +1,9 @@
+import BookingsPage from './pages/BookingsPage';
+
 function App() {
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Smart Campus Operations Hub</h1>
-      <p>Frontend setup completed successfully.</p>
+    <div style={{ padding: "0" }}>
+      <BookingsPage />
     </div>
   );
 }
