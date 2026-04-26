@@ -15,6 +15,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Resource {
+    @Id
+    private String id;
+    private String name;
+    private String type;
+    private String description;
+    private String location;
+    private Integer capacity;
+    private String status;
 
     @Id
     private String id;

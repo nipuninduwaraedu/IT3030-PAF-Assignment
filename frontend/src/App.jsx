@@ -1,3 +1,9 @@
+import BookingsPage from './pages/BookingsPage';
+
+function App() {
+  return (
+    <div style={{ padding: "0" }}>
+      <BookingsPage />
 import FacilitiesPage from "./pages/FacilitiesPage";
 import {
   BrowserRouter as Router,

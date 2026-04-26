@@ -1,3 +1,11 @@
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: 'http://localhost:8080/api',
+});
+
+export const getResources = async (filters = {}) => {
+  const response = await api.get('/resources', { params: filters });
 import axios from "axios";
 
 const api = axios.create({
@@ -14,6 +22,9 @@ export const getResourceById = async (id) => {
   return response.data;
 };
 
+export default {
+  getResources,
+  getResourceById,
 export const createResource = async (data) => {
   const response = await api.post("/resources", data);
   return response.data;
