@@ -99,10 +99,19 @@ const AdminDashboard = () => {
                 Manage Facilities →
               </Link>
             </div>
-            <div className="action-card disabled">
-              <h3>User Management</h3>
-              <p>Manage campus staff and student accounts.</p>
-              <span className="coming-soon">Coming Soon</span>
+            <div className="action-card">
+              <h3>Resource Bookings</h3>
+              <p>Approve or reject facility reservation requests.</p>
+              <Link
+                to="/bookings?role=admin"
+                style={{
+                  color: "#2563eb",
+                  fontWeight: 700,
+                  textDecoration: "none",
+                }}
+              >
+                Manage Bookings →
+              </Link>
             </div>
           </div>
         </div>

@@ -104,10 +104,20 @@ const StudentDashboard = () => {
               View Facilities →
             </Link>
           </div>
-          <div className="quick-card placeholder">
-            <h3>Upcoming: Shuttle Hub</h3>
-            <p>Tracking campus shuttle services.</p>
-            <span className="badge">Coming Soon</span>
+          <div className="quick-card">
+            <h3>Facility Bookings</h3>
+            <p>View and manage your resource reservations.</p>
+            <Link
+              to="/bookings?role=student"
+              className="view-link"
+              style={{
+                color: "#2563eb",
+                fontWeight: 700,
+                textDecoration: "none",
+              }}
+            >
+              My Bookings →
+            </Link>
           </div>
         </div>
 

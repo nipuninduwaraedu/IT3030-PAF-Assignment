@@ -1,4 +1,5 @@
 import FacilitiesPage from "./pages/FacilitiesPage";
+import BookingsPage from "./pages/BookingsPage";
 import {
   BrowserRouter as Router,
   Routes,
@@ -84,6 +85,7 @@ function AppContent() {
             <Route path="/edit-ticket/:id" element={<TEditTicket />} />
             <Route path="/my-tickets" element={<TMyTickets />} />
             <Route path="/ticket/:id" element={<TTicketDetails />} />
+            <Route path="/bookings" element={<BookingsPage role={role} />} />
           </Routes>
         </div>
       </main>

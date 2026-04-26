@@ -12,7 +12,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 })
 @EnableMongoRepositories(basePackages = {
     "com.smartcampus.facilities.repository",
-    "com.sliit.backend.repository"
+    "com.sliit.backend.repository",
+    "com.smartcampus.booking.repository"
 })
 public class BackendApplication {
     public static void main(String[] args) {
