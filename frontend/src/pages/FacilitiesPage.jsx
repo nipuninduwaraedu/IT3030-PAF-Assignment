@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import ResourceFilters from '../components/facilities/ResourceFilters';
-import ResourceCard from '../components/facilities/ResourceCard';
-import ResourceForm from '../components/facilities/ResourceForm';
-import { getResources, deleteResource, createResource, updateResource } from '../services/resourceService';
+import React, { useState, useEffect } from "react";
+import ResourceFilters from "../components/facilities/ResourceFilters";
+import ResourceCard from "../components/facilities/ResourceCard";
+import ResourceForm from "../components/facilities/ResourceForm";
+import {
+  getResources,
+  deleteResource,
+  createResource,
+  updateResource,
+} from "../services/resourceService";
 
 const FacilitiesPage = ({ role }) => {
-  const isAdmin = role === 'ADMIN';
+  const isAdmin = role === "ADMIN";
 
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +27,7 @@ const FacilitiesPage = ({ role }) => {
       const data = await getResources(filters);
       setResources(data);
     } catch (err) {
-      setError('Failed to fetch resources. Make sure the backend is running.');
+      setError("Failed to fetch resources. Make sure the backend is running.");
     } finally {
       setLoading(false);
     }
@@ -38,17 +43,23 @@ const FacilitiesPage = ({ role }) => {
   };
 
   const handleFilterChange = (filters) => setCurrentFilters(filters);
-  const handleAddClick = () => { setEditingResource(null); setShowForm(true); };
-  const handleEditClick = (resource) => { setEditingResource(resource); setShowForm(true); };
+  const handleAddClick = () => {
+    setEditingResource(null);
+    setShowForm(true);
+  };
+  const handleEditClick = (resource) => {
+    setEditingResource(resource);
+    setShowForm(true);
+  };
 
   const handleDeleteClick = async (id) => {
-    if (window.confirm('Are you sure you want to delete this resource?')) {
+    if (window.confirm("Are you sure you want to delete this resource?")) {
       try {
         await deleteResource(id);
-        showSuccess('Resource deleted successfully!');
+        showSuccess("Resource deleted successfully!");
         fetchResources(currentFilters);
       } catch (err) {
-        setError('Failed to delete resource.');
+        setError("Failed to delete resource.");
       }
     }
   };
@@ -57,193 +68,339 @@ const FacilitiesPage = ({ role }) => {
     try {
       if (editingResource) {
         await updateResource(editingResource.id, data);
-        showSuccess('Resource updated successfully!');
+        showSuccess("Resource updated successfully!");
       } else {
         await createResource(data);
-        showSuccess('Resource added successfully!');
+        showSuccess("Resource added successfully!");
       }
       setShowForm(false);
       fetchResources(currentFilters);
     } catch (err) {
-      setError('Failed to save resource.');
+      setError("Failed to save resource.");
       setShowForm(false);
     }
   };
 
   return (
-    <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
-
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <div>
-          <h1 style={{ margin: 0, fontSize: '28px', color: '#1a237e' }}>Facilities & Assets</h1>
-          <p style={{ margin: '4px 0 0 0', color: '#666', fontSize: '14px' }}>
-            {isAdmin
-              ? '🔧 Admin View — You can add, edit and delete resources'
-              : '🎓 Student View — Browse and search available resources'}
-          </p>
-        </div>
-        {isAdmin && (
-          <button
-            onClick={handleAddClick}
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#f8fafc",
+        padding: "0",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "1400px",
+          margin: "0 auto",
+          padding: "32px 24px",
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            marginBottom: "32px",
+            textAlign: "center",
+          }}
+        >
+          <h1
             style={{
-              padding: '12px 24px',
-              backgroundColor: '#4CAF50',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              fontSize: '15px',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+              fontSize: "32px",
+              fontWeight: "700",
+              color: "#1a202c",
+              margin: "0 0 8px 0",
             }}
           >
-            + Add Resource
-          </button>
+            Smart Campus Facilities
+          </h1>
+          <p
+            style={{
+              fontSize: "14px",
+              color: "#64748b",
+              margin: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+            }}
+          >
+            <span
+              style={{
+                backgroundColor: isAdmin ? "#fef3c7" : "#dbeafe",
+                color: isAdmin ? "#d97706" : "#2563eb",
+                padding: "4px 12px",
+                borderRadius: "6px",
+                fontSize: "12px",
+                fontWeight: "600",
+              }}
+            >
+              {isAdmin ? "Admin Access" : "Student Access"}
+            </span>
+          </p>
+          {isAdmin && (
+            <button
+              onClick={handleAddClick}
+              style={{
+                backgroundColor: "#2563eb",
+                color: "white",
+                border: "none",
+                padding: "12px 24px",
+                borderRadius: "8px",
+                fontSize: "14px",
+                fontWeight: "600",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                marginTop: "24px",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = "#1d4ed8";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = "#2563eb";
+              }}
+            >
+              Add New Resource
+            </button>
+          )}
+        </div>
+
+        {/* Filters — visible to everyone */}
+        <ResourceFilters onFilterChange={handleFilterChange} />
+
+        {/* Success Message */}
+        {successMsg && (
+          <div
+            style={{
+              backgroundColor: "#f0fdf4",
+              color: "#166534",
+              padding: "12px 16px",
+              borderRadius: "8px",
+              marginBottom: "24px",
+              border: "1px solid #bbf7d0",
+              fontSize: "14px",
+              fontWeight: "500",
+            }}
+          >
+            {successMsg}
+          </div>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <div
+            style={{
+              backgroundColor: "#fef2f2",
+              color: "#991b1b",
+              padding: "12px 16px",
+              borderRadius: "8px",
+              marginBottom: "24px",
+              border: "1px solid #fecaca",
+              fontSize: "14px",
+              fontWeight: "500",
+            }}
+          >
+            {error}
+          </div>
+        )}
+
+        {/* Stats Bar — Admin only */}
+        {isAdmin && !loading && (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+              gap: "16px",
+              marginBottom: "32px",
+            }}
+          >
+            {[
+              {
+                label: "Total Resources",
+                value: resources.length,
+                color: "#2563eb",
+              },
+              {
+                label: "Available",
+                value: resources.filter((r) => r.status === "ACTIVE").length,
+                color: "#166534",
+              },
+              {
+                label: "Out of Service",
+                value: resources.filter((r) => r.status === "OUT_OF_SERVICE")
+                  .length,
+                color: "#991b1b",
+              },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                style={{
+                  backgroundColor: "#ffffff",
+                  padding: "20px",
+                  borderRadius: "12px",
+                  border: "1px solid #e2e8f0",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "#64748b",
+                    fontWeight: "600",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    marginBottom: "4px",
+                  }}
+                >
+                  {stat.label}
+                </div>
+                <div
+                  style={{
+                    fontSize: "28px",
+                    fontWeight: "700",
+                    color: stat.color,
+                  }}
+                >
+                  {stat.value}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Resource Grid */}
+        {loading ? (
+          <div
+            style={{
+              textAlign: "center",
+              padding: "80px 20px",
+              color: "#64748b",
+              fontSize: "18px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "16px",
+            }}
+          >
+            <div
+              style={{
+                width: "40px",
+                height: "40px",
+                border: "4px solid #e2e8f0",
+                borderTop: "4px solid #667eea",
+                borderRadius: "50%",
+                animation: "spin 1s linear infinite",
+              }}
+            ></div>
+            <p>Loading campus facilities...</p>
+          </div>
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(380px, 1fr))",
+              gap: "24px",
+            }}
+          >
+            {resources.length === 0 ? (
+              <div
+                style={{
+                  gridColumn: "1 / -1",
+                  textAlign: "center",
+                  padding: "80px 20px",
+                  color: "#64748b",
+                  backgroundColor: "white",
+                  borderRadius: "16px",
+                  border: "1px solid #e2e8f0",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: "18px",
+                    margin: "0 0 16px 0",
+                    fontWeight: "500",
+                  }}
+                >
+                  No resources found matching the criteria.
+                </p>
+                {isAdmin && (
+                  <button
+                    onClick={handleAddClick}
+                    style={{
+                      padding: "10px 20px",
+                      backgroundColor: "#2563eb",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      fontWeight: "600",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Add First Resource
+                  </button>
+                )}
+              </div>
+            ) : (
+              resources.map((resource) => (
+                <ResourceCard
+                  key={resource.id}
+                  resource={resource}
+                  onEdit={isAdmin ? handleEditClick : null}
+                  onDelete={isAdmin ? handleDeleteClick : null}
+                  isAdmin={isAdmin}
+                />
+              ))
+            )}
+          </div>
+        )}
+
+        {/* Modal Form — Admin only */}
+        {showForm && isAdmin && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0, 0, 0, 0.6)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 1000,
+              backdropFilter: "blur(4px)",
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "white",
+                padding: "32px",
+                borderRadius: "16px",
+                width: "90%",
+                maxWidth: "600px",
+                maxHeight: "90vh",
+                overflowY: "auto",
+                boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
+                border: "1px solid #e2e8f0",
+              }}
+            >
+              <ResourceForm
+                initialData={editingResource}
+                onSubmit={handleFormSubmit}
+                onCancel={() => setShowForm(false)}
+              />
+            </div>
+          </div>
         )}
       </div>
 
-      {/* Filters — visible to everyone */}
-      <ResourceFilters onFilterChange={handleFilterChange} />
-
-      {/* Success Message */}
-      {successMsg && (
-        <div style={{
-          backgroundColor: '#e8f5e9',
-          color: '#2e7d32',
-          padding: '12px 16px',
-          borderRadius: '6px',
-          marginBottom: '16px',
-          border: '1px solid #a5d6a7',
-          fontWeight: 'bold'
-        }}>
-          ✅ {successMsg}
-        </div>
-      )}
-
-      {/* Error Message */}
-      {error && (
-        <div style={{
-          backgroundColor: '#ffebee',
-          color: '#c62828',
-          padding: '12px 16px',
-          borderRadius: '6px',
-          marginBottom: '16px',
-          border: '1px solid #ef9a9a'
-        }}>
-          ❌ {error}
-        </div>
-      )}
-
-      {/* Stats Bar — Admin only */}
-      {isAdmin && !loading && (
-        <div style={{
-          display: 'flex',
-          gap: '16px',
-          marginBottom: '20px',
-          flexWrap: 'wrap'
-        }}>
-          {[
-            { label: 'Total', value: resources.length, color: '#1a237e' },
-            { label: 'Active', value: resources.filter(r => r.status === 'ACTIVE').length, color: '#2e7d32' },
-            { label: 'Out of Service', value: resources.filter(r => r.status === 'OUT_OF_SERVICE').length, color: '#c62828' },
-          ].map(stat => (
-            <div key={stat.label} style={{
-              backgroundColor: 'white',
-              padding: '12px 20px',
-              borderRadius: '8px',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-              borderLeft: `4px solid ${stat.color}`
-            }}>
-              <div style={{ fontSize: '22px', fontWeight: 'bold', color: stat.color }}>{stat.value}</div>
-              <div style={{ fontSize: '12px', color: '#666' }}>{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Resource Grid */}
-      {loading ? (
-        <div style={{ textAlign: 'center', padding: '60px', fontSize: '18px', color: '#666' }}>
-          ⏳ Loading resources...
-        </div>
-      ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: '20px'
-        }}>
-          {resources.length === 0 ? (
-            <div style={{
-              gridColumn: '1 / -1',
-              textAlign: 'center',
-              padding: '60px',
-              color: '#757575',
-              backgroundColor: 'white',
-              borderRadius: '8px',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-            }}>
-              <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
-              <p style={{ fontSize: '18px', margin: 0 }}>No resources found matching the criteria.</p>
-              {isAdmin && (
-                <button
-                  onClick={handleAddClick}
-                  style={{
-                    marginTop: '16px',
-                    padding: '10px 20px',
-                    backgroundColor: '#4CAF50',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  + Add First Resource
-                </button>
-              )}
-            </div>
-          ) : (
-            resources.map(resource => (
-              <ResourceCard
-                key={resource.id}
-                resource={resource}
-                onEdit={isAdmin ? handleEditClick : null}
-                onDelete={isAdmin ? handleDeleteClick : null}
-                isAdmin={isAdmin}
-              />
-            ))
-          )}
-        </div>
-      )}
-
-      {/* Modal Form — Admin only */}
-      {showForm && isAdmin && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0,
-          width: '100%', height: '100%',
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex', alignItems: 'center',
-          justifyContent: 'center', zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '24px',
-            borderRadius: '10px',
-            width: '520px',
-            maxWidth: '95%',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
-          }}>
-            <ResourceForm
-              initialData={editingResource}
-              onSubmit={handleFormSubmit}
-              onCancel={() => setShowForm(false)}
-            />
-          </div>
-        </div>
-      )}
+      <style>
+        {`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
     </div>
   );
 };

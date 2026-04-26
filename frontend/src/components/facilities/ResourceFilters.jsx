@@ -1,116 +1,147 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const ResourceFilters = ({ onFilterChange }) => {
   const [filters, setFilters] = useState({
-    type: '',
-    status: '',
-    minCapacity: '',
-    location: ''
+    search: "",
+    type: "",
+    status: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFilters(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSearch = () => {
-    const activeFilters = {};
-    if (filters.type) activeFilters.type = filters.type;
-    if (filters.status) activeFilters.status = filters.status;
-    if (filters.minCapacity) activeFilters.minCapacity = parseInt(filters.minCapacity, 10);
-    if (filters.location) activeFilters.location = filters.location;
-    
-    onFilterChange(activeFilters);
+    const newFilters = { ...filters, [name]: value };
+    setFilters(newFilters);
+    onFilterChange(newFilters);
   };
 
   const handleClear = () => {
-    setFilters({ type: '', status: '', minCapacity: '', location: '' });
-    onFilterChange({});
+    const clearedFilters = { search: "", type: "", status: "" };
+    setFilters(clearedFilters);
+    onFilterChange(clearedFilters);
   };
 
-  const containerStyle = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '12px',
-    padding: '16px',
-    backgroundColor: '#f5f5f5',
-    borderRadius: '8px',
-    marginBottom: '20px',
-    alignItems: 'center'
+  const filterContainerStyle = {
+    backgroundColor: "#ffffff",
+    padding: "24px",
+    borderRadius: "12px",
+    border: "1px solid #e2e8f0",
+    marginBottom: "32px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+  };
+
+  const rowStyle = {
+    display: "flex",
+    gap: "16px",
+    flexWrap: "wrap",
+    alignItems: "flex-end",
+  };
+
+  const fieldStyle = {
+    flex: 1,
+    minWidth: "200px",
+  };
+
+  const labelStyle = {
+    display: "block",
+    fontSize: "12px",
+    fontWeight: "600",
+    color: "#64748b",
+    marginBottom: "8px",
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
   };
 
   const inputStyle = {
-    padding: '8px',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    fontSize: '14px'
+    width: "100%",
+    padding: "10px 14px",
+    borderRadius: "8px",
+    border: "1px solid #e2e8f0",
+    fontSize: "14px",
+    color: "#1e293b",
+    outline: "none",
+    transition: "all 0.2s ease",
+    backgroundColor: "#f8fafc",
   };
 
-  const btnStyle = {
-    padding: '8px 16px',
-    borderRadius: '4px',
-    border: 'none',
-    cursor: 'pointer',
-    fontWeight: 'bold',
-    color: 'white'
+  const selectStyle = {
+    ...inputStyle,
+    cursor: "pointer",
+  };
+
+  const clearBtnStyle = {
+    padding: "10px 20px",
+    backgroundColor: "transparent",
+    color: "#64748b",
+    border: "1px solid #e2e8f0",
+    borderRadius: "8px",
+    fontSize: "14px",
+    fontWeight: "600",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
   };
 
   return (
-    <div style={containerStyle}>
-      <select 
-        name="type" 
-        value={filters.type} 
-        onChange={handleChange}
-        style={inputStyle}
-      >
-        <option value="">All Types</option>
-        <option value="LECTURE_HALL">LECTURE_HALL</option>
-        <option value="LAB">LAB</option>
-        <option value="MEETING_ROOM">MEETING_ROOM</option>
-        <option value="EQUIPMENT">EQUIPMENT</option>
-      </select>
+    <div style={filterContainerStyle}>
+      <div style={rowStyle}>
+        <div style={{ ...fieldStyle, flex: 2 }}>
+          <label style={labelStyle}>Search Facilities</label>
+          <input
+            type="text"
+            name="search"
+            value={filters.search}
+            onChange={handleChange}
+            placeholder="Search by name, location or description..."
+            style={inputStyle}
+          />
+        </div>
 
-      <select 
-        name="status" 
-        value={filters.status} 
-        onChange={handleChange}
-        style={inputStyle}
-      >
-        <option value="">All Statuses</option>
-        <option value="ACTIVE">ACTIVE</option>
-        <option value="OUT_OF_SERVICE">OUT_OF_SERVICE</option>
-      </select>
+        <div style={fieldStyle}>
+          <label style={labelStyle}>Type</label>
+          <select
+            name="type"
+            value={filters.type}
+            onChange={handleChange}
+            style={selectStyle}
+          >
+            <option value="">All Types</option>
+            <option value="LECTURE_HALL">Lecture Hall</option>
+            <option value="LAB">Laboratory</option>
+            <option value="MEETING_ROOM">Meeting Room</option>
+            <option value="EQUIPMENT">Equipment</option>
+          </select>
+        </div>
 
-      <input 
-        type="number" 
-        name="minCapacity" 
-        placeholder="Min capacity" 
-        value={filters.minCapacity} 
-        onChange={handleChange}
-        style={inputStyle}
-      />
+        <div style={fieldStyle}>
+          <label style={labelStyle}>Status</label>
+          <select
+            name="status"
+            value={filters.status}
+            onChange={handleChange}
+            style={selectStyle}
+          >
+            <option value="">All Status</option>
+            <option value="ACTIVE">Available</option>
+            <option value="OUT_OF_SERVICE">Out of Service</option>
+          </select>
+        </div>
 
-      <input 
-        type="text" 
-        name="location" 
-        placeholder="Location" 
-        value={filters.location} 
-        onChange={handleChange}
-        style={inputStyle}
-      />
-
-      <button 
-        style={{ ...btnStyle, backgroundColor: '#1976d2' }} 
-        onClick={handleSearch}
-      >
-        Search
-      </button>
-      <button 
-        style={{ ...btnStyle, backgroundColor: '#757575' }} 
-        onClick={handleClear}
-      >
-        Clear
-      </button>
+        <button
+          onClick={handleClear}
+          style={clearBtnStyle}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = "#f1f5f9";
+            e.target.style.color = "#1e293b";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = "transparent";
+            e.target.style.color = "#64748b";
+          }}
+        >
+          Clear Filters
+        </button>
+      </div>
     </div>
   );
 };

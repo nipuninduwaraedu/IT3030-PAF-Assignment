@@ -1,11 +1,11 @@
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api'
+  baseURL: 'http://localhost:8100/api'
 });
 
 export const getResources = async (filters = {}) => {
-  const response = await api.get('/resources', { params: filters });
+  const response = await api.get("/resources", { params: filters });
   return response.data;
 };
 
@@ -15,7 +15,7 @@ export const getResourceById = async (id) => {
 };
 
 export const createResource = async (data) => {
-  const response = await api.post('/resources', data);
+  const response = await api.post("/resources", data);
   return response.data;
 };
 

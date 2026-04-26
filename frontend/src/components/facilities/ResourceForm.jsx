@@ -57,154 +57,226 @@ const ResourceForm = ({ initialData, onSubmit, onCancel }) => {
     }
   };
 
-  const formStyle = {
+  const overlayStyle = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(15, 23, 42, 0.5)",
+    backdropFilter: "blur(4px)",
     display: "flex",
-    flexDirection: "column",
-    gap: "12px",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
     padding: "20px",
-    border: "1px solid #ccc",
-    borderRadius: "8px",
-    backgroundColor: "#fff",
-    maxWidth: "500px",
   };
 
-  const fieldStyle = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "4px",
+  const modalStyle = {
+    backgroundColor: "#ffffff",
+    borderRadius: "16px",
+    width: "100%",
+    maxWidth: "550px",
+    maxHeight: "90vh",
+    overflowY: "auto",
+    padding: "32px",
+    border: "1px solid #e2e8f0",
+  };
+
+  const titleStyle = {
+    fontSize: "24px",
+    fontWeight: "700",
+    color: "#1e293b",
+    margin: "0 0 24px 0",
+  };
+
+  const formGroupStyle = {
+    marginBottom: "20px",
   };
 
   const labelStyle = {
-    fontWeight: "bold",
-    fontSize: "14px",
+    display: "block",
+    fontSize: "13px",
+    fontWeight: "600",
+    color: "#475569",
+    marginBottom: "6px",
+    textTransform: "uppercase",
+    letterSpacing: "0.025em",
   };
 
   const inputStyle = {
-    padding: "8px",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
+    width: "100%",
+    padding: "10px 14px",
+    borderRadius: "8px",
+    border: "1px solid #e2e8f0",
     fontSize: "14px",
+    color: "#1e293b",
+    outline: "none",
+    transition: "border-color 0.2s ease",
   };
 
-  const errorStyle = {
-    color: "#d32f2f",
+  const errorTextStyle = {
+    color: "#dc2626",
     fontSize: "12px",
-    margin: "0",
+    marginTop: "4px",
+    fontWeight: "500",
   };
 
-  const buttonContainer = {
+  const buttonContainerStyle = {
     display: "flex",
-    gap: "10px",
-    marginTop: "10px",
+    gap: "12px",
+    marginTop: "32px",
   };
 
   const btnStyle = {
-    padding: "10px 16px",
-    borderRadius: "4px",
+    flex: 1,
+    padding: "12px",
+    borderRadius: "8px",
     border: "none",
+    fontSize: "14px",
+    fontWeight: "600",
     cursor: "pointer",
-    fontWeight: "bold",
+    transition: "all 0.2s ease",
+  };
+
+  const submitBtnStyle = {
+    ...btnStyle,
+    backgroundColor: "#2563eb",
     color: "white",
   };
 
+  const cancelBtnStyle = {
+    ...btnStyle,
+    backgroundColor: "#f1f5f9",
+    color: "#475569",
+  };
+
   return (
-    <form style={formStyle} onSubmit={handleSubmit}>
-      <h2 style={{ margin: "0 0 10px 0" }}>
-        {initialData ? "Update Resource" : "Add Resource"}
-      </h2>
+    <div style={overlayStyle} onClick={onCancel}>
+      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+        <h2 style={titleStyle}>{initialData ? "Edit Facility" : "Add New Facility"}</h2>
 
-      <div style={fieldStyle}>
-        <label style={labelStyle}>Name *</label>
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          style={inputStyle}
-        />
-        {errors.name && <p style={errorStyle}>{errors.name}</p>}
-      </div>
+        <form onSubmit={handleSubmit}>
+          <div style={formGroupStyle}>
+            <label style={labelStyle}>Facility Name</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              style={inputStyle}
+              placeholder="e.g. Main Auditorium"
+            />
+            {errors.name && <div style={errorTextStyle}>{errors.name}</div>}
+          </div>
 
-      <div style={fieldStyle}>
-        <label style={labelStyle}>Type *</label>
-        <select
-          name="type"
-          value={formData.type}
-          onChange={handleChange}
-          style={inputStyle}
-        >
-          <option value="LECTURE_HALL">LECTURE_HALL</option>
-          <option value="LAB">LAB</option>
-          <option value="MEETING_ROOM">MEETING_ROOM</option>
-          <option value="EQUIPMENT">EQUIPMENT</option>
-        </select>
-        {errors.type && <p style={errorStyle}>{errors.type}</p>}
-      </div>
-
-      <div style={fieldStyle}>
-        <label style={labelStyle}>Location *</label>
-        <input
-          type="text"
-          name="location"
-          value={formData.location}
-          onChange={handleChange}
-          style={inputStyle}
-        />
-        {errors.location && <p style={errorStyle}>{errors.location}</p>}
-      </div>
-
-      <div style={fieldStyle}>
-        <label style={labelStyle}>Capacity</label>
-        <input
-          type="number"
-          name="capacity"
-          value={formData.capacity}
-          onChange={handleChange}
-          style={inputStyle}
-        />
-      </div>
-
-      <div style={fieldStyle}>
-        <label style={labelStyle}>Status</label>
-        <select
-          name="status"
-          value={formData.status}
-          onChange={handleChange}
-          style={inputStyle}
-        >
-          <option value="ACTIVE">ACTIVE</option>
-          <option value="OUT_OF_SERVICE">OUT_OF_SERVICE</option>
-        </select>
-      </div>
-
-      <div style={fieldStyle}>
-        <label style={labelStyle}>Description</label>
-        <textarea
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          style={{ ...inputStyle, minHeight: "80px", resize: "vertical" }}
-        />
-      </div>
-
-      <div style={buttonContainer}>
-        <button
-          type="submit"
-          style={{ ...btnStyle, backgroundColor: "#4CAF50" }}
-        >
-          {initialData ? "Update Resource" : "Add Resource"}
-        </button>
-        {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            style={{ ...btnStyle, backgroundColor: "#9e9e9e" }}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "20px",
+              marginBottom: "20px",
+            }}
           >
-            Cancel
-          </button>
-        )}
+            <div>
+              <label style={labelStyle}>Resource Type</label>
+              <select
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                style={inputStyle}
+              >
+                <option value="LECTURE_HALL">Lecture Hall</option>
+                <option value="LAB">Laboratory</option>
+                <option value="MEETING_ROOM">Meeting Room</option>
+                <option value="EQUIPMENT">Equipment</option>
+              </select>
+            </div>
+            <div>
+              <label style={labelStyle}>Initial Status</label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                style={inputStyle}
+              >
+                <option value="ACTIVE">Available</option>
+                <option value="OUT_OF_SERVICE">Out of Service</option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "20px",
+              marginBottom: "20px",
+            }}
+          >
+            <div>
+              <label style={labelStyle}>Location</label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                style={inputStyle}
+                placeholder="e.g. Building A, Floor 2"
+              />
+              {errors.location && <div style={errorTextStyle}>{errors.location}</div>}
+            </div>
+            <div>
+              <label style={labelStyle}>Capacity</label>
+              <input
+                type="number"
+                name="capacity"
+                value={formData.capacity}
+                onChange={handleChange}
+                style={inputStyle}
+                placeholder="Number of people"
+              />
+            </div>
+          </div>
+
+          <div style={formGroupStyle}>
+            <label style={labelStyle}>Description</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              style={{
+                ...inputStyle,
+                height: "100px",
+                resize: "none",
+                fontFamily: "inherit",
+              }}
+              placeholder="Brief details about the facility..."
+            />
+          </div>
+
+          <div style={buttonContainerStyle}>
+            <button
+              type="button"
+              onClick={onCancel}
+              style={cancelBtnStyle}
+              onMouseEnter={(e) => (e.target.style.backgroundColor = "#e2e8f0")}
+              onMouseLeave={(e) => (e.target.style.backgroundColor = "#f1f5f9")}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              style={submitBtnStyle}
+              onMouseEnter={(e) => (e.target.style.backgroundColor = "#1d4ed8")}
+              onMouseLeave={(e) => (e.target.style.backgroundColor = "#2563eb")}
+            >
+              {initialData ? "Update Facility" : "Create Facility"}
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   );
 };
 
