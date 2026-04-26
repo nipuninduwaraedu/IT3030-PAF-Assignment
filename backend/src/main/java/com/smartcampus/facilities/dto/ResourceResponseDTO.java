@@ -1,30 +1,19 @@
-package com.smartcampus.facilities.entity;
+package com.smartcampus.facilities.dto;
 
+import com.smartcampus.facilities.entity.ResourceStatus;
+import com.smartcampus.facilities.entity.ResourceType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-@Document(collection = "resources")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Resource {
-    @Id
-    private String id;
-    private String name;
-    private String type;
-    private String description;
-    private String location;
-    private Integer capacity;
-    private String status;
-
-    @Id
+public class ResourceResponseDTO {
     private String id;
     private String name;
     private ResourceType type;
@@ -34,5 +23,4 @@ public class Resource {
     private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 }
