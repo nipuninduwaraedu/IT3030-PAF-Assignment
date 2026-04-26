@@ -1,5 +1,11 @@
 import FacilitiesPage from "./pages/FacilitiesPage";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import TCreateTicket from "./pages/TCreateTicket";
 import TEditTicket from "./pages/TEditTicket";
 import TMyTickets from "./pages/TMyTickets";
@@ -11,9 +17,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import "./App.css";
 
-function App() {
-  // Read role from URL: ?role=admin or ?role=student
-  const params = new URLSearchParams(window.location.search);
+function AppContent() {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
   const role = params.get("role") === "admin" ? "ADMIN" : "STUDENT";
 
   const navStyle = {
@@ -54,45 +60,41 @@ function App() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#f8fafc",
-      }}
-    >
+    <div style={{ minHeight: "100vh", backgroundColor: "#f8fafc" }}>
       <nav style={navStyle}>
-        <h1 style={navTitleStyle}>
-          <span>🏫</span>
-          Smart Campus Hub
-        </h1>
+        <h1 style={navTitleStyle}>Smart Campus Hub</h1>
         <span style={badgeStyle}>
-          <span>{role === "ADMIN" ? "🔧" : "🎓"}</span>
           {role === "ADMIN" ? "Administrator" : "Student Portal"}
         </span>
       </nav>
       <main>
-        <FacilitiesPage role={role} />
+        <div className="app-container">
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/student-dashboard" element={<StudentDashboard />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/tickets" element={<AdminAllTickets />} />
+            <Route
+              path="/facilities"
+              element={<FacilitiesPage role={role} />}
+            />
+            <Route path="/create-ticket" element={<TCreateTicket />} />
+            <Route path="/edit-ticket/:id" element={<TEditTicket />} />
+            <Route path="/my-tickets" element={<TMyTickets />} />
+            <Route path="/ticket/:id" element={<TTicketDetails />} />
+          </Routes>
+        </div>
       </main>
     </div>
+  );
+}
+
+function App() {
+  return (
     <Router>
-      <div className="app-container">
-        <Routes>
-          {/* Default route to Login */}
-          <Route path="/" element={<Navigate to="/login" />} />
-          
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          
-          <Route path="/student-dashboard" element={<StudentDashboard />} />
-          <Route path="/create-ticket" element={<TCreateTicket />} />
-          <Route path="/edit-ticket/:id" element={<TEditTicket />} />
-          <Route path="/my-tickets" element={<TMyTickets />} />
-          <Route path="/ticket/:id" element={<TTicketDetails />} />
-          
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/tickets" element={<AdminAllTickets />} />
-        </Routes>
-      </div>
+      <AppContent />
     </Router>
   );
 }

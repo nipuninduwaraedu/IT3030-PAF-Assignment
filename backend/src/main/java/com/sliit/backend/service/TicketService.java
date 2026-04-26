@@ -164,7 +164,7 @@ public class TicketService {
         checkMongo();
         if (mongoAvailable) {
             try {
-                ticketRepository.findById(id).orElseGet(() -> 
+                return ticketRepository.findById(id).orElseGet(() -> 
                     inMemoryTickets.stream().filter(t -> t.getId().equals(id)).findFirst()
                         .orElseThrow(() -> new RuntimeException("Ticket not found"))
                 );
