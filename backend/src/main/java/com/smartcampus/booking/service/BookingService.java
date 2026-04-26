@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class BookingService {
 
     private final BookingRepository bookingRepository;
-    private final BookingRepositoryCustomImpl bookingRepositoryCustomImpl;
     private final ResourceRepository resourceRepository;
 
     public BookingResponseDTO requestBooking(BookingRequestDTO dto, String requestedById, String requestedByEmail) {
@@ -115,7 +114,7 @@ public class BookingService {
     }
 
     public List<BookingResponseDTO> getAllBookings(BookingStatus status, String resourceId, LocalDate from, LocalDate to) {
-        return bookingRepositoryCustomImpl.searchBookings(status, resourceId, from, to).stream()
+        return bookingRepository.searchBookings(status, resourceId, from, to).stream()
                 .map(BookingMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }

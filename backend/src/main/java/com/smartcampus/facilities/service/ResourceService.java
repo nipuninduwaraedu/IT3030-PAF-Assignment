@@ -20,12 +20,10 @@ import java.util.stream.Collectors;
 public class ResourceService {
 
     private final ResourceRepository resourceRepository;
-    private final ResourceRepositoryCustomImpl resourceRepositoryCustomImpl;
 
     @Autowired
-    public ResourceService(ResourceRepository resourceRepository, ResourceRepositoryCustomImpl resourceRepositoryCustomImpl) {
+    public ResourceService(ResourceRepository resourceRepository) {
         this.resourceRepository = resourceRepository;
-        this.resourceRepositoryCustomImpl = resourceRepositoryCustomImpl;
     }
 
     public ResourceResponseDTO createResource(ResourceRequestDTO dto) {
@@ -67,7 +65,7 @@ public class ResourceService {
     }
 
     public List<ResourceResponseDTO> searchResources(ResourceType type, Integer minCapacity, String location, ResourceStatus status) {
-        List<Resource> resources = resourceRepositoryCustomImpl.searchResources(type, minCapacity, location, status);
+        List<Resource> resources = resourceRepository.searchResources(type, minCapacity, location, status);
         return resources.stream()
                 .map(ResourceMapper::toResponseDTO)
                 .collect(Collectors.toList());

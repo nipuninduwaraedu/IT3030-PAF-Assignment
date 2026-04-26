@@ -109,7 +109,7 @@ public class AuthService {
                 user.setRole(request.getRole() != null ? request.getRole() : "STUDENT");
 
                 user = userRepository.save(user);
-                return new AuthResponse(user.getId(), user.getUsername(), user.getRole(), "User registered successfully");
+                return new AuthResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), "User registered successfully");
             } catch (Exception e) {
                 if (e.getMessage() != null && e.getMessage().contains("exists")) throw e;
                 mongoAvailable = false;
@@ -130,7 +130,7 @@ public class AuthService {
         
         inMemoryUsers.add(user);
         saveFallback();
-        return new AuthResponse(user.getId(), user.getUsername(), user.getRole(), "Registered successfully (Fallback Mode)");
+        return new AuthResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), "Registered successfully (Fallback Mode)");
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -142,7 +142,7 @@ public class AuthService {
                 if (userOpt.isPresent()) {
                     User user = userOpt.get();
                     if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-                        return new AuthResponse(user.getId(), user.getUsername(), user.getRole(), "Login successful");
+                        return new AuthResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), "Login successful");
                     }
                 }
             } catch (Exception e) {
@@ -160,7 +160,7 @@ public class AuthService {
             throw new RuntimeException("Invalid password");
         }
 
-        return new AuthResponse(user.getId(), user.getUsername(), user.getRole(), "Login successful (Fallback Mode)");
+        return new AuthResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), "Login successful (Fallback Mode)");
     }
 
     public AuthResponse socialLogin(SocialLoginRequest request) {
@@ -181,7 +181,7 @@ public class AuthService {
                     user.setRole("STUDENT");
                     user = userRepository.save(user);
                 }
-                return new AuthResponse(user.getId(), user.getUsername(), user.getRole(), "Google login successful");
+                return new AuthResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), "Google login successful");
             } catch (Exception e) {
                 mongoAvailable = false;
             }
@@ -204,6 +204,6 @@ public class AuthService {
             saveFallback();
         }
 
-        return new AuthResponse(user.getId(), user.getUsername(), user.getRole(), "Google login successful (Fallback Mode)");
+        return new AuthResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), "Google login successful (Fallback Mode)");
     }
 }

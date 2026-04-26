@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ResourceRepository extends MongoRepository<Resource, String> {
+public interface ResourceRepository extends MongoRepository<Resource, String>, ResourceRepositoryCustom {
     List<Resource> findByStatus(ResourceStatus status);
     List<Resource> findByType(ResourceType type);
     List<Resource> findByTypeAndStatus(ResourceType type, ResourceStatus status);
