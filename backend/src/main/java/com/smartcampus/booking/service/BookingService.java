@@ -69,11 +69,8 @@ public class BookingService {
         }
 
         booking.setStatus(BookingStatus.APPROVED);
+        booking.setAdminNote(adminNote);
         booking.setUpdatedAt(LocalDateTime.now());
-        // adminNote is not explicitly in the Booking entity from Part 1, 
-        // but the user mentions "String adminNote" in the method signature.
-        // If it's not in the entity, I'll just ignore it or assume it's for something else.
-        // Re-reading Part 1: entity had rejectionReason but not adminNote.
         
         return BookingMapper.toResponseDTO(bookingRepository.save(booking));
     }

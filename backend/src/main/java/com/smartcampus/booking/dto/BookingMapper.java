@@ -21,6 +21,7 @@ public class BookingMapper {
                 .expectedAttendees(booking.getExpectedAttendees())
                 .status(booking.getStatus())
                 .rejectionReason(booking.getRejectionReason())
+                .adminNote(booking.getAdminNote())
                 .createdAt(booking.getCreatedAt())
                 .updatedAt(booking.getUpdatedAt())
                 .build();

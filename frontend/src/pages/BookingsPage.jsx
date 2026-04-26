@@ -15,13 +15,13 @@ const BookingsPage = ({ role }) => {
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('my'); // 'my' or 'all'
+  const isAdmin = role === 'ADMIN';
+  const [activeTab, setActiveTab] = useState(isAdmin ? 'all' : 'my'); // Admin defaults to 'all', Student to 'my'
   const [showForm, setShowForm] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectingBookingId, setRejectingBookingId] = useState(null);
   const [adminStatusFilter, setAdminStatusFilter] = useState('');
 
-  const isAdmin = role === 'ADMIN';
   const user = authService.getCurrentUser();
 
   useEffect(() => {
@@ -57,8 +57,8 @@ const BookingsPage = ({ role }) => {
         const resData = await getResources({ status: 'ACTIVE' });
         setResources(resData);
         
-        // Initial fetch for "My Bookings"
-        await fetchData('my');
+        // Initial fetch based on role
+        await fetchData(isAdmin ? 'all' : 'my');
       } catch (err) {
         setError('Failed to initialize page data');
       } finally {
@@ -213,21 +213,27 @@ const BookingsPage = ({ role }) => {
     <div style={pageContainerStyle}>
       <div style={headerStyle}>
         <h1 style={{ margin: 0 }}>Booking Management</h1>
-        <button 
-          style={newBookingButtonStyle} 
-          onClick={() => setShowForm(true)}
-        >
-          New Booking
-        </button>
+        {!isAdmin && (
+          <button 
+            style={newBookingButtonStyle} 
+            onClick={() => setShowForm(true)}
+          >
+            New Booking
+          </button>
+        )}
       </div>
 
       <div style={tabContainerStyle}>
-        <button style={getTabButtonStyle('my')} onClick={() => handleTabChange('my')}>
-          My Bookings
-        </button>
-        <button style={getTabButtonStyle('all')} onClick={() => handleTabChange('all')}>
-          All Bookings
-        </button>
+        {!isAdmin && (
+          <button style={getTabButtonStyle('my')} onClick={() => handleTabChange('my')}>
+            My Bookings
+          </button>
+        )}
+        {isAdmin && (
+          <button style={getTabButtonStyle('all')} onClick={() => handleTabChange('all')}>
+            All Bookings
+          </button>
+        )}
       </div>
 
       {error && (

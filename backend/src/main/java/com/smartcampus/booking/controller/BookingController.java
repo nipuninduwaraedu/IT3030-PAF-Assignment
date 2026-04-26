@@ -24,10 +24,15 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public ResponseEntity<BookingResponseDTO> requestBooking(
+    public ResponseEntity<?> requestBooking(
             @RequestHeader("X-User-Id") String userId,
             @RequestHeader("X-User-Email") String email,
+            @RequestHeader(value = "X-User-Role", defaultValue = "STUDENT") String role,
             @RequestBody @Valid BookingRequestDTO dto) {
+        if ("ADMIN".equalsIgnoreCase(role)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(java.util.Map.of("error", "Admins cannot create bookings. Only students are allowed to make bookings."));
+        }
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(bookingService.requestBooking(dto, userId, email));
     }

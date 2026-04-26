@@ -34,6 +34,7 @@ public class Booking {
     private BookingStatus status = BookingStatus.PENDING;
     
     private String rejectionReason;
+    private String adminNote;
     
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

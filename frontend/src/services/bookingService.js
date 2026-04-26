@@ -11,6 +11,7 @@ api.interceptors.request.use((config) => {
     const user = JSON.parse(userStr);
     config.headers['X-User-Id'] = user.id;
     config.headers['X-User-Email'] = user.email;
+    config.headers['X-User-Role'] = user.role;
   }
   return config;
 }, (error) => {
