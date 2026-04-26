@@ -28,3 +28,11 @@ export const deleteResource = async (id) => {
   const response = await api.delete(`/resources/${id}`);
   return response.data;
 };
+
+export default {
+  getResources,
+  getResourceById,
+  createResource,
+  updateResource,
+  deleteResource
+};

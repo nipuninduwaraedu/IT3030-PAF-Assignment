@@ -16,12 +16,24 @@ import AdminAllTickets from "./pages/AdminAllTickets";
 import StudentDashboard from "./pages/StudentDashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import authService from "./services/authService";
 import "./App.css";
 
 function AppContent() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const role = params.get("role") === "admin" ? "ADMIN" : "STUDENT";
+  const user = authService.getCurrentUser();
+  
+  let role = "STUDENT";
+  const urlRole = params.get("role");
+  
+  if (urlRole === "admin") {
+    role = "ADMIN";
+  } else if (urlRole === "student") {
+    role = "STUDENT";
+  } else if (user) {
+    role = user.role;
+  }
 
   const navStyle = {
     background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",

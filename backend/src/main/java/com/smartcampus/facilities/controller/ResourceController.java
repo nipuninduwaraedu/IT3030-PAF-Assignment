@@ -1,14 +1,16 @@
 package com.smartcampus.facilities.controller;
+
 import com.smartcampus.facilities.dto.ResourceRequestDTO;
 import com.smartcampus.facilities.dto.ResourceResponseDTO;
 import com.smartcampus.facilities.entity.ResourceStatus;
 import com.smartcampus.facilities.entity.ResourceType;
 import com.smartcampus.facilities.service.ResourceService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -19,13 +21,10 @@ import java.util.List;
     "http://localhost:5174",
     "http://localhost:5175"
 })
+@RequiredArgsConstructor
 public class ResourceController {
-    private final ResourceService resourceService;
 
-    @Autowired
-    public ResourceController(ResourceService resourceService) {
-        this.resourceService = resourceService;
-    }
+    private final ResourceService resourceService;
 
     @GetMapping
     public ResponseEntity<List<ResourceResponseDTO>> getResources(

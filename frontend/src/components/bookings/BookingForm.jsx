@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-const BookingForm = ({ resources, onSubmit, onCancel }) => {
+const BookingForm = ({ resources, onSubmit, onCancel, initialResourceId }) => {
   const [formData, setFormData] = useState({
-    resourceId: '',
+    resourceId: initialResourceId || '',
     startTime: '',
     endTime: '',
     purpose: '',

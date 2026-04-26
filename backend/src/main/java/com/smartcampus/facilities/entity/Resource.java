@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Resource {
-
     @Id
     private String id;
     private String name;
@@ -26,5 +25,4 @@ public class Resource {
     private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 }

@@ -1,6 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const ResourceCard = ({ resource, onEdit, onDelete, isAdmin }) => {
+  const navigate = useNavigate();
+
+  const handleBookClick = () => {
+    navigate("/bookings", { state: { preSelectedResourceId: resource.id } });
+  };
   const getTypeColor = (type) => {
     switch (type) {
       case "LAB":
@@ -147,7 +153,7 @@ const ResourceCard = ({ resource, onEdit, onDelete, isAdmin }) => {
         </p>
       )}
 
-      {isAdmin && (
+      {isAdmin ? (
         <div style={buttonContainerStyle}>
           <button
             style={editBtnStyle}
@@ -166,6 +172,23 @@ const ResourceCard = ({ resource, onEdit, onDelete, isAdmin }) => {
             Delete
           </button>
         </div>
+      ) : (
+        resource.status === "ACTIVE" && (
+          <div style={buttonContainerStyle}>
+            <button
+              style={{
+                ...btnStyle,
+                backgroundColor: "#2563eb",
+                color: "white",
+              }}
+              onClick={handleBookClick}
+              onMouseEnter={(e) => (e.target.style.backgroundColor = "#1d4ed8")}
+              onMouseLeave={(e) => (e.target.style.backgroundColor = "#2563eb")}
+            >
+              Book Now
+            </button>
+          </div>
+        )
       )}
     </div>
   );

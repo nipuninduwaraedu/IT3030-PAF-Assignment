@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import bookingService from '../services/bookingService';
 // Assuming resourceService exists as per instructions
 import { getResources } from '../services/resourceService';
@@ -6,7 +7,10 @@ import BookingCard from '../components/bookings/BookingCard';
 import BookingForm from '../components/bookings/BookingForm';
 import RejectModal from '../components/bookings/RejectModal';
 
-const BookingsPage = () => {
+import authService from '../services/authService';
+
+const BookingsPage = ({ role }) => {
+  const location = useLocation();
   const [bookings, setBookings] = useState([]);
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,8 +21,14 @@ const BookingsPage = () => {
   const [rejectingBookingId, setRejectingBookingId] = useState(null);
   const [adminStatusFilter, setAdminStatusFilter] = useState('');
 
-  // Hardcoded for testing both tabs as requested
-  const isAdmin = true;
+  const isAdmin = role === 'ADMIN';
+  const user = authService.getCurrentUser();
+
+  useEffect(() => {
+    if (location.state?.preSelectedResourceId) {
+      setShowForm(true);
+    }
+  }, [location.state]);
 
   const fetchData = async (tab, statusFilter = '') => {
     setLoading(true);
@@ -279,6 +289,7 @@ const BookingsPage = () => {
         <div style={modalOverlayStyle}>
           <BookingForm 
             resources={resources} 
+            initialResourceId={location.state?.preSelectedResourceId}
             onSubmit={handleFormSubmit} 
             onCancel={() => setShowForm(false)} 
           />

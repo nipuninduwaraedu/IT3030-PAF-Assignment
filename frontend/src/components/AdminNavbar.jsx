@@ -19,7 +19,9 @@ const AdminNavbar = () => {
       <h2>Campus Admin Hub</h2>
       <div className="nav-links">
         <Link to="/admin" className={isActive("/admin") ? "active" : ""}>Overview</Link>
+        <Link to="/facilities" className={isActive("/facilities") ? "active" : ""}>Facilities</Link>
         <Link to="/admin/tickets" className={isActive("/admin/tickets") ? "active" : ""}>Incident Tracking</Link>
+        <Link to="/bookings" className={isActive("/bookings") ? "active" : ""}>Bookings</Link>
         <button onClick={handleLogout} className="btn-logout-nav">
           Logout
         </button>

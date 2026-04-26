@@ -22,9 +22,9 @@ const TNavbar = () => {
         {user.role === "STUDENT" ? (
           <>
             <Link to="/student-dashboard" className={isActive("/student-dashboard") ? "active" : ""}>Dashboard</Link>
-            <Link to="/my-tickets" className={isActive("/my-tickets") ? "active" : ""}>Incident Tracking</Link>
-            <Link to="/create-ticket" className={isActive("/create-ticket") ? "active" : ""}>Report Issue</Link>
-            <Link to="#" className="placeholder-link">Other Services</Link>
+            <Link to="/facilities" className={isActive("/facilities") ? "active" : ""}>Facilities</Link>
+            <Link to="/bookings" className={isActive("/bookings") ? "active" : ""}>My Bookings</Link>
+            <Link to="/my-tickets" className={isActive("/my-tickets") ? "active" : ""}>Incidents</Link>
           </>
         ) : (
           <>
