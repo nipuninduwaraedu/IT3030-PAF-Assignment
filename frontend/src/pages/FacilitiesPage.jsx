@@ -300,46 +300,40 @@ const FacilitiesPage = ({ role }) => {
               gap: "24px",
             }}
           >
-            {resources.length === 0 ? (
-              <div
-                style={{
-                  gridColumn: "1 / -1",
-                  textAlign: "center",
-                  padding: "80px 20px",
-                  color: "#64748b",
-                  backgroundColor: "white",
-                  borderRadius: "16px",
-                  border: "1px solid #e2e8f0",
-                }}
-              >
-                <p
+          {resources.length === 0 ? (
+            <div
+              style={{
+                gridColumn: "1 / -1",
+                textAlign: "center",
+                padding: "80px 20px",
+                color: "#64748b",
+                backgroundColor: "white",
+                borderRadius: "16px",
+                border: "1px solid #e2e8f0",
+              }}
+            >
+              <p style={{ fontSize: "18px", margin: "0 0 16px 0", fontWeight: "500" }}>
+                No resources found matching the criteria.
+              </p>
+              {isAdmin && (
+                <button
+                  onClick={handleAddClick}
                   style={{
-                    fontSize: "18px",
-                    margin: "0 0 16px 0",
-                    fontWeight: "500",
+                    padding: "10px 20px",
+                    backgroundColor: "#2563eb",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    fontSize: "14px",
                   }}
                 >
-                  No resources found matching the criteria.
-                </p>
-                {isAdmin && (
-                  <button
-                    onClick={handleAddClick}
-                    style={{
-                      padding: "10px 20px",
-                      backgroundColor: "#2563eb",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      fontWeight: "600",
-                      fontSize: "14px",
-                    }}
-                  >
-                    Add First Resource
-                  </button>
-                )}
-              </div>
-            ) : (
+                  Add First Resource
+                </button>
+              )}
+            </div>
+          ) : (
               resources.map((resource) => (
                 <ResourceCard
                   key={resource.id}

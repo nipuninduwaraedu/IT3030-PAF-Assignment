@@ -127,6 +127,8 @@ const BookingsPage = ({ role }) => {
     } catch (err) {
       if (err.response?.status === 409) {
         setError('Conflict: this resource is already booked for that time');
+      } else if (err.response?.data?.errors) {
+        setError(Array.isArray(err.response.data.errors) ? err.response.data.errors.join(', ') : err.response.data.errors);
       } else {
         setError(err.response?.data?.error || 'Failed to create booking');
       }

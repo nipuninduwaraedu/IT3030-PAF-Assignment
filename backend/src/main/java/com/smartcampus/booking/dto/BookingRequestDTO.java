@@ -1,5 +1,6 @@
 package com.smartcampus.booking.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -17,9 +18,11 @@ public class BookingRequestDTO {
     private String resourceId;
 
     @NotNull(message = "Start time is required")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime startTime;
 
     @NotNull(message = "End time is required")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endTime;
 
     @NotBlank(message = "Purpose is required")
